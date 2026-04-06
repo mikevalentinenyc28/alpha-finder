@@ -37,7 +37,6 @@ body {
   min-height: 100vh;
 }
 
-/* --- HEADER --- */
 .header {
   border-bottom: 1px solid var(--border);
   padding: 2rem 2rem 1.5rem;
@@ -62,7 +61,6 @@ body {
   text-transform: uppercase;
 }
 
-/* --- INTRO --- */
 .intro {
   max-width: 1100px;
   margin: 0 auto;
@@ -111,7 +109,6 @@ body {
   background: var(--accent-glow);
 }
 
-/* --- FINDER TOOL --- */
 .finder {
   max-width: 1100px;
   margin: 0 auto;
@@ -132,7 +129,7 @@ body {
   font-size: 1.05rem;
   line-height: 2.4;
   color: var(--text-muted);
-  max-width: 800px;
+  max-width: 900px;
 }
 
 .sentence select {
@@ -171,7 +168,6 @@ body {
   padding: 0.3rem;
 }
 
-/* Multi-select styling */
 .multi-select-wrapper {
   display: inline-block;
   position: relative;
@@ -240,7 +236,6 @@ body {
   accent-color: var(--accent);
 }
 
-/* --- SUBMIT --- */
 .submit-row {
   margin-top: 1.5rem;
   display: flex;
@@ -259,9 +254,7 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-search:hover {
-  background: var(--accent);
-}
+.btn-search:hover { background: var(--accent); }
 
 .btn-reset {
   font-family: var(--font-mono);
@@ -287,7 +280,6 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* --- RESULTS GRID --- */
 .results {
   max-width: 1100px;
   margin: 0 auto;
@@ -305,8 +297,6 @@ body {
   border: 1px solid var(--border);
   transition: all 0.25s;
   cursor: pointer;
-  text-decoration: none;
-  color: inherit;
   display: block;
   overflow: hidden;
 }
@@ -368,9 +358,7 @@ body {
   letter-spacing: 0.05em;
 }
 
-.card-body {
-  padding: 0.9rem;
-}
+.card-body { padding: 0.9rem; }
 
 .card-name {
   font-family: var(--font-display);
@@ -405,7 +393,221 @@ body {
   color: var(--text-dim);
 }
 
-/* --- NO RESULTS --- */
+/* --- MODAL --- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 3rem 1rem;
+  overflow-y: auto;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-accent);
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  animation: modalIn 0.25s ease-out;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+.modal-close:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
+.modal-hero {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-hero-placeholder {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  color: var(--border);
+}
+
+.modal-badges {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modal-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  background: rgba(10,10,10,0.9);
+  border: 1px solid var(--border);
+}
+
+.modal-badge.master { color: var(--accent); border-color: var(--accent-dim); }
+.modal-badge.creator { color: var(--text-muted); }
+.modal-badge.verified { color: #6bdf6b; border-color: var(--green); }
+
+.modal-content { padding: 1.5rem; }
+
+.modal-name {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.15rem;
+}
+
+.modal-aliases {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+}
+
+.modal-bio {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+}
+
+.modal-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-dim);
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.modal-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.modal-stat-label { color: var(--text-dim); }
+.modal-stat-value { color: var(--text); }
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.modal-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.modal-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.modal-social-link {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--accent-dim);
+  transition: all 0.2s;
+}
+.modal-social-link:hover {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.modal-btn {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  padding: 0.5rem 1.25rem;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.modal-btn-primary {
+  background: var(--accent-dim);
+  color: var(--bg);
+  border: none;
+}
+.modal-btn-primary:hover { background: var(--accent); }
+
+.modal-btn-secondary {
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.modal-btn-secondary:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
 .no-results {
   text-align: center;
   padding: 3rem 1rem;
@@ -414,15 +616,16 @@ body {
   font-size: 0.85rem;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 600px) {
   .header h1 { font-size: 2.5rem; }
   .sentence { font-size: 0.95rem; }
   .results-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
   .header, .intro, .finder, .results { padding-left: 1rem; padding-right: 1rem; }
+  .modal { margin: 1rem; }
+  .modal-stats { grid-template-columns: 1fr; }
+  .modal-actions { flex-direction: column; }
 }
 
-/* --- SCROLLBAR --- */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-accent); }
@@ -452,12 +655,14 @@ body {
     I'm looking for a
     <select id="f-verification"><option value="">—</option></select>
     <select id="f-ethnicity"><option value="">—</option></select>
+    <select id="f-nationality"><option value="">—</option></select>
     <select id="f-type"><option value="">—</option></select>
     aged
     <select id="f-age"><option value="">—</option></select>
+    based in
+    <select id="f-location"><option value="">—</option></select>
     who is
-    <select id="f-build"><option value="">—</option></select>
-    ,
+    <select id="f-build"><option value="">—</option></select>,
     <select id="f-height"><option value="">—</option></select>
     tall, with
     <select id="f-bodyhair"><option value="">—</option></select>
@@ -488,18 +693,30 @@ body {
   <div class="results-grid" id="resultsGrid"></div>
 </div>
 
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
 <script>
 // ============================================================
-// CREATOR DATA — edit this array to add/remove creators
-// Each creator object feeds the dropdowns AND the results.
+// CREATOR DATA — edit this array to add/remove creators.
+// Empty strings ("") for unknown fields — they won't show
+// in dropdowns or on cards. Dropdowns auto-populate from data.
 // ============================================================
 const CREATORS = [
   {
     name: "Master Frank",
+    aliases: ["MasterFrank08"],
     type: "Master",
     verification: "Verified",
     ethnicity: "White",
-    age_range: "20s",
+    nationality: "American",
+    location: "",
+    age_range: "25-29",
     build: "Muscular",
     height: "",
     height_range: "",
@@ -508,14 +725,25 @@ const CREATORS = [
     foot_size: "12.5",
     purpose: ["Custom Vids"],
     kinks: ["Foot Worship", "Verbal Domination", "Findom"],
+    bio: "",
     photo: "https://mikevalentinenyc.wordpress.com/wp-content/uploads/2025/08/36a1870_dxo.jpg",
-    wordpress_tag_url: ""
+    socials: {
+      "Twitter/X": "https://x.com/MasterFrank08",
+      "Linktree": "https://linktr.ee/masterfrank08",
+      "Venmo": "https://venmo.com/u/MasterFrank08",
+      "OnlyFans": "https://onlyfans.com/masterfrank08"
+    },
+    wordpress_profile_url: "https://mikevalentinenyc.wordpress.com/master-frank/",
+    wordpress_tag_url: "https://mikevalentinenyc.wordpress.com/tag/master-frank/"
   },
   {
     name: "DomMaxNYC",
+    aliases: [],
     type: "Master",
     verification: "Verified",
     ethnicity: "White",
+    nationality: "American",
+    location: "New York",
     age_range: "30s",
     build: "Muscular",
     height: "6'0\"",
@@ -525,14 +753,23 @@ const CREATORS = [
     foot_size: "12",
     purpose: ["Custom Vids", "Gear/Worn Items"],
     kinks: ["Foot Worship", "Verbal Domination", "Findom"],
+    bio: "NYC-based alpha with a commanding presence. Known for intense verbal sessions.",
     photo: "",
+    socials: {
+      "Twitter/X": "#",
+      "OnlyFans": "#"
+    },
+    wordpress_profile_url: "https://yoursite.wordpress.com/creators/dommaxnyc",
     wordpress_tag_url: "https://yoursite.wordpress.com/tag/dommaxnyc"
   },
   {
     name: "KingCash",
+    aliases: ["Cash_Master", "KingC"],
     type: "Master",
     verification: "Verified",
     ethnicity: "Black",
+    nationality: "American",
+    location: "Atlanta",
     age_range: "25-29",
     build: "Athletic",
     height: "5'10\"",
@@ -542,14 +779,22 @@ const CREATORS = [
     foot_size: "11",
     purpose: ["Custom Vids", "Browsing"],
     kinks: ["Findom", "Humiliation", "Foot Worship"],
+    bio: "Unapologetic findom energy. Heavy ink, heavier presence.",
     photo: "",
+    socials: {
+      "Twitter/X": "#"
+    },
+    wordpress_profile_url: "https://yoursite.wordpress.com/creators/kingcash",
     wordpress_tag_url: "https://yoursite.wordpress.com/tag/kingcash"
   },
   {
     name: "AlphaRex",
+    aliases: ["Rex_Domina"],
     type: "Master",
     verification: "Verified",
     ethnicity: "Latino",
+    nationality: "American",
+    location: "Miami",
     age_range: "30s",
     build: "Stocky",
     height: "5'8\"",
@@ -559,14 +804,23 @@ const CREATORS = [
     foot_size: "10",
     purpose: ["Meets", "Custom Vids", "Gear/Worn Items"],
     kinks: ["Roleplay", "Foot Worship", "Muscle Worship", "Gear"],
+    bio: "Old-school dom energy. Does meets in the Miami area.",
     photo: "",
+    socials: {
+      "Twitter/X": "#",
+      "Telegram": "#"
+    },
+    wordpress_profile_url: "https://yoursite.wordpress.com/creators/alpharex",
     wordpress_tag_url: "https://yoursite.wordpress.com/tag/alpharex"
   },
   {
     name: "SoleMaster_J",
+    aliases: [],
     type: "Creator",
     verification: "Verified",
     ethnicity: "Asian",
+    nationality: "",
+    location: "",
     age_range: "20-24",
     build: "Lean",
     height: "5'9\"",
@@ -576,14 +830,22 @@ const CREATORS = [
     foot_size: "9",
     purpose: ["Browsing", "Custom Vids"],
     kinks: ["Foot Worship", "Sneaker Play"],
+    bio: "Clean aesthetic foot content. High-quality photos and clips.",
     photo: "",
+    socials: {
+      "Twitter/X": "#"
+    },
+    wordpress_profile_url: "",
     wordpress_tag_url: "https://yoursite.wordpress.com/tag/solemasterj"
   },
   {
     name: "SirDominic",
+    aliases: ["Dom_D"],
     type: "Master",
     verification: "Unverified",
     ethnicity: "White",
+    nationality: "British",
+    location: "London",
     age_range: "40s",
     build: "Dad Bod",
     height: "6'2\"",
@@ -593,14 +855,20 @@ const CREATORS = [
     foot_size: "13",
     purpose: ["Browsing"],
     kinks: ["Verbal Domination", "Leather", "Cigar"],
+    bio: "UK-based. Old-guard leather energy.",
     photo: "",
+    socials: {},
+    wordpress_profile_url: "",
     wordpress_tag_url: "https://yoursite.wordpress.com/tag/sirdominic"
   },
   {
     name: "FeetGod_Mike",
+    aliases: [],
     type: "Creator",
     verification: "Verified",
     ethnicity: "Middle Eastern",
+    nationality: "",
+    location: "",
     age_range: "25-29",
     build: "Athletic",
     height: "5'11\"",
@@ -610,13 +878,19 @@ const CREATORS = [
     foot_size: "11",
     purpose: ["Custom Vids", "Gear/Worn Items", "Browsing"],
     kinks: ["Foot Worship", "Sneaker Play", "Sock Play"],
+    bio: "Sneaker and sock content with a focus on close-up detail work.",
     photo: "",
+    socials: {
+      "Twitter/X": "#",
+      "OnlyFans": "#"
+    },
+    wordpress_profile_url: "",
     wordpress_tag_url: "https://yoursite.wordpress.com/tag/feetgodmike"
   }
 ];
 
 // ============================================================
-// DYNAMIC DROPDOWN POPULATION
+// DROPDOWN POPULATION
 // ============================================================
 function uniqueValues(field) {
   const vals = new Set();
@@ -630,8 +904,7 @@ function uniqueValues(field) {
 
 function populateSelect(id, field) {
   const sel = document.getElementById(id);
-  const vals = uniqueValues(field);
-  vals.forEach(v => {
+  uniqueValues(field).forEach(v => {
     const opt = document.createElement('option');
     opt.value = v;
     opt.textContent = v;
@@ -643,14 +916,13 @@ function populateMultiSelect(wrapperId, field) {
   const wrapper = document.getElementById(wrapperId);
   const dropdown = wrapper.querySelector('.multi-select-dropdown');
   const trigger = wrapper.querySelector('.multi-select-trigger');
-  const vals = uniqueValues(field);
 
-  vals.forEach(v => {
+  uniqueValues(field).forEach(v => {
     const label = document.createElement('label');
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.value = v;
-    cb.addEventListener('change', () => updateMultiTrigger(wrapper, field));
+    cb.addEventListener('change', () => updateMultiTrigger(wrapper));
     label.appendChild(cb);
     label.appendChild(document.createTextNode(v));
     dropdown.appendChild(label);
@@ -658,7 +930,6 @@ function populateMultiSelect(wrapperId, field) {
 
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-    // Close other dropdowns
     document.querySelectorAll('.multi-select-dropdown.open').forEach(d => {
       if (d !== dropdown) d.classList.remove('open');
     });
@@ -666,34 +937,28 @@ function populateMultiSelect(wrapperId, field) {
   });
 }
 
-function updateMultiTrigger(wrapper, field) {
+function updateMultiTrigger(wrapper) {
   const checked = wrapper.querySelectorAll('input[type="checkbox"]:checked');
   const trigger = wrapper.querySelector('.multi-select-trigger');
-  if (checked.length === 0) {
-    trigger.textContent = 'Any';
-  } else if (checked.length <= 2) {
-    trigger.textContent = [...checked].map(c => c.value).join(', ');
-  } else {
-    trigger.textContent = checked.length + ' selected';
-  }
+  if (checked.length === 0) trigger.textContent = 'Any';
+  else if (checked.length <= 2) trigger.textContent = [...checked].map(c => c.value).join(', ');
+  else trigger.textContent = checked.length + ' selected';
 }
 
 function getMultiSelectValues(wrapperId) {
-  const wrapper = document.getElementById(wrapperId);
-  const checked = wrapper.querySelectorAll('input[type="checkbox"]:checked');
-  return [...checked].map(c => c.value);
+  return [...document.getElementById(wrapperId).querySelectorAll('input:checked')].map(c => c.value);
 }
 
-// Close multi-selects on outside click
 document.addEventListener('click', () => {
   document.querySelectorAll('.multi-select-dropdown.open').forEach(d => d.classList.remove('open'));
 });
 
-// Populate all
 populateSelect('f-verification', 'verification');
 populateSelect('f-ethnicity', 'ethnicity');
+populateSelect('f-nationality', 'nationality');
 populateSelect('f-type', 'type');
 populateSelect('f-age', 'age_range');
+populateSelect('f-location', 'location');
 populateSelect('f-build', 'build');
 populateSelect('f-height', 'height_range');
 populateSelect('f-bodyhair', 'body_hair');
@@ -703,14 +968,16 @@ populateMultiSelect('ms-purpose', 'purpose');
 populateMultiSelect('ms-kinks', 'kinks');
 
 // ============================================================
-// SEARCH / FILTER
+// SEARCH
 // ============================================================
 function doSearch() {
-  const filters = {
+  const f = {
     verification: document.getElementById('f-verification').value,
     ethnicity: document.getElementById('f-ethnicity').value,
+    nationality: document.getElementById('f-nationality').value,
     type: document.getElementById('f-type').value,
     age_range: document.getElementById('f-age').value,
+    location: document.getElementById('f-location').value,
     build: document.getElementById('f-build').value,
     height_range: document.getElementById('f-height').value,
     body_hair: document.getElementById('f-bodyhair').value,
@@ -720,18 +987,12 @@ function doSearch() {
     kinks: getMultiSelectValues('ms-kinks')
   };
 
-  let results = CREATORS.filter(c => {
-    if (filters.verification && c.verification !== filters.verification) return false;
-    if (filters.ethnicity && c.ethnicity !== filters.ethnicity) return false;
-    if (filters.type && c.type !== filters.type) return false;
-    if (filters.age_range && c.age_range !== filters.age_range) return false;
-    if (filters.build && c.build !== filters.build) return false;
-    if (filters.height_range && c.height_range !== filters.height_range) return false;
-    if (filters.body_hair && c.body_hair !== filters.body_hair) return false;
-    if (filters.tattoos && c.tattoos !== filters.tattoos) return false;
-    if (filters.foot_size && c.foot_size !== filters.foot_size) return false;
-    if (filters.purpose.length > 0 && !filters.purpose.some(p => c.purpose.includes(p))) return false;
-    if (filters.kinks.length > 0 && !filters.kinks.some(k => c.kinks.includes(k))) return false;
+  const results = CREATORS.filter(c => {
+    for (const key of ['verification','ethnicity','nationality','type','age_range','location','build','height_range','body_hair','tattoos','foot_size']) {
+      if (f[key] && c[key] !== f[key]) return false;
+    }
+    if (f.purpose.length > 0 && !f.purpose.some(p => c.purpose.includes(p))) return false;
+    if (f.kinks.length > 0 && !f.kinks.some(k => c.kinks.includes(k))) return false;
     return true;
   });
 
@@ -747,7 +1008,7 @@ function resetAll() {
 }
 
 // ============================================================
-// RENDER RESULTS
+// RENDER
 // ============================================================
 function renderResults(results) {
   const grid = document.getElementById('resultsGrid');
@@ -760,32 +1021,106 @@ function renderResults(results) {
   }
 
   count.textContent = results.length + ' result' + (results.length !== 1 ? 's' : '');
+  window._lastResults = results;
 
-  grid.innerHTML = results.map(c => `
-    <a class="card" href="${c.wordpress_tag_url}" target="_blank" rel="noopener">
+  grid.innerHTML = results.map((c, i) => `
+    <div class="card" onclick="openModal(${i})">
       <div class="card-image">
-        ${c.photo
-          ? `<img src="${c.photo}" alt="${c.name}" />`
-          : `<span class="card-placeholder">${c.name.charAt(0)}</span>`
-        }
+        ${c.photo ? `<img src="${c.photo}" alt="${c.name}" />` : `<span class="card-placeholder">${c.name.charAt(0)}</span>`}
         <span class="card-type-badge ${c.type.toLowerCase()}">${c.type}</span>
         ${c.verification === 'Verified' ? '<span class="card-verified">✓ Verified</span>' : ''}
       </div>
       <div class="card-body">
         <div class="card-name">${c.name}</div>
         <div class="card-meta">
-          ${c.ethnicity} · ${c.age_range} · ${c.build} · ${c.height}<br>
-          Size ${c.foot_size} · ${c.body_hair} · ${c.tattoos} ink
+          ${[c.ethnicity, c.nationality, c.age_range, c.build, c.height].filter(Boolean).join(' · ')}<br>
+          ${[c.foot_size ? 'Size ' + c.foot_size : '', c.body_hair, c.tattoos ? c.tattoos + ' ink' : ''].filter(Boolean).join(' · ')}
         </div>
         <div class="card-tags">
-          ${c.kinks.map(k => `<span class="card-tag">${k}</span>`).join('')}
+          ${c.kinks.slice(0, 3).map(k => `<span class="card-tag">${k}</span>`).join('')}
+          ${c.kinks.length > 3 ? `<span class="card-tag">+${c.kinks.length - 3}</span>` : ''}
         </div>
       </div>
-    </a>
+    </div>
   `).join('');
 }
 
-// Show all on page load
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(index) {
+  const c = window._lastResults[index];
+  const overlay = document.getElementById('modalOverlay');
+  const body = document.getElementById('modalBody');
+
+  const socialLinks = Object.entries(c.socials || {})
+    .filter(([k, v]) => v && v !== '#')
+    .map(([k, v]) => `<a class="modal-social-link" href="${v}" target="_blank" rel="noopener">${k}</a>`)
+    .join('');
+
+  const locationLine = [c.location, c.nationality].filter(Boolean).join(', ');
+
+  body.innerHTML = `
+    <div class="modal-hero">
+      ${c.photo ? `<img src="${c.photo}" alt="${c.name}" />` : `<span class="modal-hero-placeholder">${c.name.charAt(0)}</span>`}
+      <div class="modal-badges">
+        <span class="modal-badge ${c.type.toLowerCase()}">${c.type}</span>
+        ${c.verification === 'Verified' ? '<span class="modal-badge verified">✓ Verified</span>' : '<span class="modal-badge">Unverified</span>'}
+      </div>
+    </div>
+    <div class="modal-content">
+      <div class="modal-name">${c.name}</div>
+      ${c.aliases && c.aliases.length > 0 ? `<div class="modal-aliases">AKA: ${c.aliases.join(', ')}</div>` : ''}
+      ${c.bio ? `<div class="modal-bio">${c.bio}</div>` : ''}
+
+      <div class="modal-section-label">// Details</div>
+      <div class="modal-stats">
+        ${c.ethnicity ? `<span class="modal-stat-label">Ethnicity</span><span class="modal-stat-value">${c.ethnicity}</span>` : ''}
+        ${c.nationality ? `<span class="modal-stat-label">Nationality</span><span class="modal-stat-value">${c.nationality}</span>` : ''}
+        ${c.location ? `<span class="modal-stat-label">Based in</span><span class="modal-stat-value">${c.location}</span>` : ''}
+        ${c.age_range ? `<span class="modal-stat-label">Age</span><span class="modal-stat-value">${c.age_range}</span>` : ''}
+        ${c.build ? `<span class="modal-stat-label">Build</span><span class="modal-stat-value">${c.build}</span>` : ''}
+        ${c.height ? `<span class="modal-stat-label">Height</span><span class="modal-stat-value">${c.height}</span>` : ''}
+        ${c.foot_size ? `<span class="modal-stat-label">Foot Size</span><span class="modal-stat-value">US ${c.foot_size}</span>` : ''}
+        ${c.body_hair ? `<span class="modal-stat-label">Body Hair</span><span class="modal-stat-value">${c.body_hair}</span>` : ''}
+        ${c.tattoos ? `<span class="modal-stat-label">Tattoos</span><span class="modal-stat-value">${c.tattoos}</span>` : ''}
+      </div>
+
+      ${c.purpose.length > 0 ? `
+        <div class="modal-section-label">// Available for</div>
+        <div class="modal-tags">${c.purpose.map(p => `<span class="modal-tag">${p}</span>`).join('')}</div>
+      ` : ''}
+
+      ${c.kinks.length > 0 ? `
+        <div class="modal-section-label">// Open to</div>
+        <div class="modal-tags">${c.kinks.map(k => `<span class="modal-tag">${k}</span>`).join('')}</div>
+      ` : ''}
+
+      ${socialLinks ? `
+        <div class="modal-section-label">// Links</div>
+        <div class="modal-socials">${socialLinks}</div>
+      ` : ''}
+
+      <div class="modal-actions">
+        ${c.wordpress_profile_url ? `<a class="modal-btn modal-btn-primary" href="${c.wordpress_profile_url}" target="_blank" rel="noopener">FULL PROFILE</a>` : ''}
+        ${c.wordpress_tag_url ? `<a class="modal-btn modal-btn-secondary" href="${c.wordpress_tag_url}" target="_blank" rel="noopener">SEE ALL POSTS</a>` : ''}
+      </div>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+  if (event && event.target !== document.getElementById('modalOverlay') && event.target !== document.querySelector('.modal-close')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+// Show all on load
 doSearch();
 </script>
 </body>
