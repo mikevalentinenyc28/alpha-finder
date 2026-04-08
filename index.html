@@ -125,6 +125,13 @@ body {
   display: block;
 }
 
+.loading-msg {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  padding: 2rem 0;
+}
+
 .sentence {
   font-size: 1.05rem;
   line-height: 2.4;
@@ -576,17 +583,16 @@ body {
   display: flex;
   gap: 0.75rem;
   margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
 }
 
 .modal-btn {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   letter-spacing: 0.12em;
-  padding: 0.5rem 1.25rem;
+  padding: 0.6rem 1.25rem;
   text-decoration: none;
   text-align: center;
+  cursor: pointer;
   transition: all 0.2s;
   flex: 1;
 }
@@ -651,9 +657,11 @@ body {
 
 <div class="finder">
   <span class="finder-label">// Build your search</span>
-  <div class="sentence" id="finderSentence">
+  <div id="loadingMsg" class="loading-msg">Loading creators...</div>
+  <div class="sentence" id="finderSentence" style="display:none;">
     I'm looking for a
     <select id="f-verification"><option value="">—</option></select>
+    <select id="f-orientation"><option value="">—</option></select>
     <select id="f-ethnicity"><option value="">—</option></select>
     <select id="f-nationality"><option value="">—</option></select>
     <select id="f-type"><option value="">—</option></select>
@@ -682,7 +690,7 @@ body {
     </span>.
   </div>
 
-  <div class="submit-row">
+  <div class="submit-row" id="submitRow" style="display:none;">
     <button class="btn-search" onclick="doSearch()">FIND</button>
     <button class="btn-reset" onclick="resetAll()">Reset</button>
     <span class="result-count" id="resultCount"></span>
@@ -703,209 +711,124 @@ body {
 
 <script>
 // ============================================================
-// CREATOR DATA — edit this array to add/remove creators.
-// Empty strings ("") for unknown fields — they won't show
-// in dropdowns or on cards. Dropdowns auto-populate from data.
+// RANGE / BUCKET DEFINITIONS
 // ============================================================
-const CREATORS = [
-  {
-    name: "Master Frank",
-    aliases: ["MasterFrank08"],
-    type: "Master",
-    verification: "Verified",
-    ethnicity: "White",
-    nationality: "American",
-    location: "Texas",
-    age_range: "20-24",
-    build: "Muscular",
-    height: "",
-    height_range: "",
-    body_hair: "",
-    tattoos: "Some",
-    foot_size: "12.5",
-    purpose: ["Custom Vids", "Findom"],
-    kinks: ["Foot Worship", "Verbal Domination", "Findom"],
-    bio: "Straight alpha cash master Frank dominates with his prove-your-worth findom and premium size 12.5 manly foot worship content.",
-    photo: "https://mikevalentinenyc.wordpress.com/wp-content/uploads/2025/08/36a1870_dxo.jpg",
-    socials: {
-      "Twitter/X": "https://x.com/MasterFrank08",
-      "Linktree": "https://linktr.ee/masterfrank08",
-      "Venmo": "https://venmo.com/u/MasterFrank08",
-      "OnlyFans": "https://onlyfans.com/masterfrank08"
-    },
-    wordpress_profile_url: "https://mikevalentinenyc.wordpress.com/master-frank/",
-    wordpress_tag_url: "https://mikevalentinenyc.wordpress.com/tag/master-frank/"
-  },
-  {
-    name: "Alpha Spencer",
-    aliases: ["alphagodspencer"],
-    type: "Master",
-    verification: "Verified",
-    ethnicity: "White",
-    nationality: "American",
-    location: "",
-    age_range: "20-24",
-    build: "Muscular",
-    height: "",
-    height_range: "",
-    body_hair: "Some",
-    tattoos: "",
-    foot_size: "",
-    purpose: ["Custom Vids", "Findom"],
-    kinks: ["Foot Worship", "Verbal Domination", "Findom", "MAGA"],
-    bio: "Muscular alpha god Spencer dominates with his direct no-nonsense verbal findom and premium foot worship content.",
-    photo: "https://mikevalentinenyc.wordpress.com/wp-content/uploads/2026/04/1871050954201784822_1.jpg",
-    socials: {
-      "Twitter/X": "https://x.com/alphagodspencer",
-      "Linktree": "https://linktr.ee/spenceralpha",
-      "Cash App": "https://cash.app/$musclegod3313"
-    },
-    wordpress_profile_url: "https://mikevalentinenyc.wordpress.com/alpha-spencer/",
-    wordpress_tag_url: "https://mikevalentinenyc.wordpress.com/tag/alpha-spencer/"
-  },
-  {
-    name: "KingCash",
-    aliases: ["Cash_Master", "KingC"],
-    type: "Master",
-    verification: "Verified",
-    ethnicity: "Black",
-    nationality: "American",
-    location: "Atlanta",
-    age_range: "25-29",
-    build: "Athletic",
-    height: "5'10\"",
-    height_range: "5'7\"-5'10\"",
-    body_hair: "Smooth",
-    tattoos: "Heavy",
-    foot_size: "11",
-    purpose: ["Custom Vids", "Browsing"],
-    kinks: ["Findom", "Humiliation", "Foot Worship"],
-    bio: "Unapologetic findom energy. Heavy ink, heavier presence.",
-    photo: "",
-    socials: {
-      "Twitter/X": "#"
-    },
-    wordpress_profile_url: "https://yoursite.wordpress.com/creators/kingcash",
-    wordpress_tag_url: "https://yoursite.wordpress.com/tag/kingcash"
-  },
-  {
-    name: "AlphaRex",
-    aliases: ["Rex_Domina"],
-    type: "Master",
-    verification: "Verified",
-    ethnicity: "Latino",
-    nationality: "American",
-    location: "Miami",
-    age_range: "30s",
-    build: "Stocky",
-    height: "5'8\"",
-    height_range: "5'7\"-5'10\"",
-    body_hair: "Hairy",
-    tattoos: "Some",
-    foot_size: "10",
-    purpose: ["Meets", "Custom Vids", "Gear/Worn Items"],
-    kinks: ["Roleplay", "Foot Worship", "Muscle Worship", "Gear"],
-    bio: "Old-school dom energy. Does meets in the Miami area.",
-    photo: "",
-    socials: {
-      "Twitter/X": "#",
-      "Telegram": "#"
-    },
-    wordpress_profile_url: "https://yoursite.wordpress.com/creators/alpharex",
-    wordpress_tag_url: "https://yoursite.wordpress.com/tag/alpharex"
-  },
-  {
-    name: "SoleMaster_J",
-    aliases: [],
-    type: "Creator",
-    verification: "Verified",
-    ethnicity: "Asian",
-    nationality: "",
-    location: "",
-    age_range: "20-24",
-    build: "Lean",
-    height: "5'9\"",
-    height_range: "5'7\"-5'10\"",
-    body_hair: "Smooth",
-    tattoos: "None",
-    foot_size: "9",
-    purpose: ["Browsing", "Custom Vids"],
-    kinks: ["Foot Worship", "Sneaker Play"],
-    bio: "Clean aesthetic foot content. High-quality photos and clips.",
-    photo: "",
-    socials: {
-      "Twitter/X": "#"
-    },
-    wordpress_profile_url: "",
-    wordpress_tag_url: "https://yoursite.wordpress.com/tag/solemasterj"
-  },
-  {
-    name: "SirDominic",
-    aliases: ["Dom_D"],
-    type: "Master",
-    verification: "Unverified",
-    ethnicity: "White",
-    nationality: "British",
-    location: "London",
-    age_range: "40s",
-    build: "Dad Bod",
-    height: "6'2\"",
-    height_range: "6'2\"+",
-    body_hair: "Very Hairy",
-    tattoos: "None",
-    foot_size: "13",
-    purpose: ["Browsing"],
-    kinks: ["Verbal Domination", "Leather", "Cigar"],
-    bio: "UK-based. Old-guard leather energy.",
-    photo: "",
-    socials: {},
-    wordpress_profile_url: "",
-    wordpress_tag_url: "https://yoursite.wordpress.com/tag/sirdominic"
-  },
-  {
-    name: "FeetGod_Mike",
-    aliases: [],
-    type: "Creator",
-    verification: "Verified",
-    ethnicity: "Middle Eastern",
-    nationality: "",
-    location: "",
-    age_range: "25-29",
-    build: "Athletic",
-    height: "5'11\"",
-    height_range: "5'11\"-6'1\"",
-    body_hair: "Trimmed",
-    tattoos: "Some",
-    foot_size: "11",
-    purpose: ["Custom Vids", "Gear/Worn Items", "Browsing"],
-    kinks: ["Foot Worship", "Sneaker Play", "Sock Play"],
-    bio: "Sneaker and sock content with a focus on close-up detail work.",
-    photo: "",
-    socials: {
-      "Twitter/X": "#",
-      "OnlyFans": "#"
-    },
-    wordpress_profile_url: "",
-    wordpress_tag_url: "https://yoursite.wordpress.com/tag/feetgodmike"
-  }
+const AGE_BUCKETS = [
+  { label: "18-19", min: 18, max: 19 },
+  { label: "20-24", min: 20, max: 24 },
+  { label: "25-29", min: 25, max: 29 },
+  { label: "30-34", min: 30, max: 34 },
+  { label: "35-39", min: 35, max: 39 },
+  { label: "40-44", min: 40, max: 44 },
+  { label: "45-49", min: 45, max: 49 },
+  { label: "50+",   min: 50, max: 999 }
 ];
+
+const HEIGHT_BUCKETS = [
+  { label: "Under 5'5\"",    min: 0,  max: 64 },
+  { label: "5'5\"-5'8\"",    min: 65, max: 68 },
+  { label: "5'9\"-5'11\"",   min: 69, max: 71 },
+  { label: "6'0\"-6'2\"",    min: 72, max: 74 },
+  { label: "6'3\"+",         min: 75, max: 999 }
+];
+
+const FOOT_BUCKETS = [
+  { label: "8-9",     min: 8,    max: 9 },
+  { label: "9.5-10",  min: 9.5,  max: 10 },
+  { label: "10.5-11", min: 10.5, max: 11 },
+  { label: "11.5-12", min: 11.5, max: 12 },
+  { label: "12.5-13", min: 12.5, max: 13 },
+  { label: "13+",     min: 13,   max: 999 }
+];
+
+const BUILD_ORDER = ["Slim", "Lean", "Athletic", "Muscular", "Stocky", "Dad Bod", "Heavy"];
+const BODY_HAIR_ORDER = ["Smooth", "Trimmed", "Some", "Hairy", "Very Hairy"];
+const TATTOO_ORDER = ["None", "Some", "Heavy"];
+const ORIENTATION_ORDER = ["Straight", "Bi", "Gay", "Unknown"];
+
+function ageBucket(age) {
+  if (!age) return "";
+  return (AGE_BUCKETS.find(b => age >= b.min && age <= b.max) || {}).label || "";
+}
+function heightBucket(inches) {
+  if (!inches) return "";
+  return (HEIGHT_BUCKETS.find(b => inches >= b.min && inches <= b.max) || {}).label || "";
+}
+function footBucket(size) {
+  if (!size) return "";
+  return (FOOT_BUCKETS.find(b => size >= b.min && size <= b.max) || {}).label || "";
+}
+function formatHeight(inches) {
+  if (!inches) return "";
+  return Math.floor(inches / 12) + "'" + (inches % 12) + '"';
+}
+
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+let CREATORS = [];
+
+// ============================================================
+// FETCH DATA FROM NETLIFY FUNCTION (proxied Airtable)
+// ============================================================
+async function loadCreators() {
+  try {
+    const res = await fetch('/.netlify/functions/creators');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    // Map Airtable field names to internal names and compute buckets
+    CREATORS = data.map(c => ({
+      ...c,
+      photo: c.photo_url || "",
+      _age_bucket: ageBucket(c.age),
+      _height_bucket: heightBucket(c.height_inches),
+      _height_display: formatHeight(c.height_inches),
+      _foot_bucket: footBucket(c.foot_size)
+    }));
+
+    // Show the UI
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('finderSentence').style.display = 'block';
+    document.getElementById('submitRow').style.display = 'flex';
+
+    populateAllDropdowns();
+    doSearch();
+  } catch (err) {
+    document.getElementById('loadingMsg').textContent =
+      'Failed to load creators. Try refreshing.';
+    console.error('Load error:', err);
+  }
+}
 
 // ============================================================
 // DROPDOWN POPULATION
 // ============================================================
-function uniqueValues(field) {
-  const vals = new Set();
-  CREATORS.forEach(c => {
-    const v = c[field];
-    if (Array.isArray(v)) v.forEach(x => vals.add(x));
-    else if (v) vals.add(v);
-  });
-  return [...vals].sort();
+function populateBucketSelect(id, buckets, creatorField) {
+  const sel = document.getElementById(id);
+  buckets.filter(b => CREATORS.some(c => c[creatorField] === b.label))
+    .forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.label;
+      opt.textContent = b.label;
+      sel.appendChild(opt);
+    });
 }
 
-function populateSelect(id, field) {
+function populateOrderedSelect(id, order, field) {
   const sel = document.getElementById(id);
-  uniqueValues(field).forEach(v => {
+  const existing = new Set(CREATORS.map(c => c[field]).filter(Boolean));
+  order.filter(v => existing.has(v)).forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    sel.appendChild(opt);
+  });
+}
+
+function populateAlphaSelect(id, field) {
+  const sel = document.getElementById(id);
+  [...new Set(CREATORS.map(c => c[field]).filter(Boolean))].sort().forEach(v => {
     const opt = document.createElement('option');
     opt.value = v;
     opt.textContent = v;
@@ -918,7 +841,13 @@ function populateMultiSelect(wrapperId, field) {
   const dropdown = wrapper.querySelector('.multi-select-dropdown');
   const trigger = wrapper.querySelector('.multi-select-trigger');
 
-  uniqueValues(field).forEach(v => {
+  const vals = new Set();
+  CREATORS.forEach(c => {
+    const v = c[field];
+    if (Array.isArray(v)) v.forEach(x => vals.add(x));
+    else if (v) vals.add(v);
+  });
+  [...vals].sort().forEach(v => {
     const label = document.createElement('label');
     const cb = document.createElement('input');
     cb.type = 'checkbox';
@@ -954,19 +883,22 @@ document.addEventListener('click', () => {
   document.querySelectorAll('.multi-select-dropdown.open').forEach(d => d.classList.remove('open'));
 });
 
-populateSelect('f-verification', 'verification');
-populateSelect('f-ethnicity', 'ethnicity');
-populateSelect('f-nationality', 'nationality');
-populateSelect('f-type', 'type');
-populateSelect('f-age', 'age_range');
-populateSelect('f-location', 'location');
-populateSelect('f-build', 'build');
-populateSelect('f-height', 'height_range');
-populateSelect('f-bodyhair', 'body_hair');
-populateSelect('f-tattoos', 'tattoos');
-populateSelect('f-footsize', 'foot_size');
-populateMultiSelect('ms-purpose', 'purpose');
-populateMultiSelect('ms-kinks', 'kinks');
+function populateAllDropdowns() {
+  populateAlphaSelect('f-verification', 'verification');
+  populateOrderedSelect('f-orientation', ORIENTATION_ORDER, 'orientation');
+  populateAlphaSelect('f-ethnicity', 'ethnicity');
+  populateAlphaSelect('f-nationality', 'nationality');
+  populateAlphaSelect('f-type', 'type');
+  populateBucketSelect('f-age', AGE_BUCKETS, '_age_bucket');
+  populateAlphaSelect('f-location', 'location');
+  populateOrderedSelect('f-build', BUILD_ORDER, 'build');
+  populateBucketSelect('f-height', HEIGHT_BUCKETS, '_height_bucket');
+  populateOrderedSelect('f-bodyhair', BODY_HAIR_ORDER, 'body_hair');
+  populateOrderedSelect('f-tattoos', TATTOO_ORDER, 'tattoos');
+  populateBucketSelect('f-footsize', FOOT_BUCKETS, '_foot_bucket');
+  populateMultiSelect('ms-purpose', 'purpose');
+  populateMultiSelect('ms-kinks', 'kinks');
+}
 
 // ============================================================
 // SEARCH
@@ -974,24 +906,34 @@ populateMultiSelect('ms-kinks', 'kinks');
 function doSearch() {
   const f = {
     verification: document.getElementById('f-verification').value,
+    orientation: document.getElementById('f-orientation').value,
     ethnicity: document.getElementById('f-ethnicity').value,
     nationality: document.getElementById('f-nationality').value,
     type: document.getElementById('f-type').value,
-    age_range: document.getElementById('f-age').value,
+    age_bucket: document.getElementById('f-age').value,
     location: document.getElementById('f-location').value,
     build: document.getElementById('f-build').value,
-    height_range: document.getElementById('f-height').value,
+    height_bucket: document.getElementById('f-height').value,
     body_hair: document.getElementById('f-bodyhair').value,
     tattoos: document.getElementById('f-tattoos').value,
-    foot_size: document.getElementById('f-footsize').value,
+    foot_bucket: document.getElementById('f-footsize').value,
     purpose: getMultiSelectValues('ms-purpose'),
     kinks: getMultiSelectValues('ms-kinks')
   };
 
   const results = CREATORS.filter(c => {
-    for (const key of ['verification','ethnicity','nationality','type','age_range','location','build','height_range','body_hair','tattoos','foot_size']) {
-      if (f[key] && c[key] !== f[key]) return false;
-    }
+    if (f.verification && c.verification !== f.verification) return false;
+    if (f.orientation && c.orientation !== f.orientation) return false;
+    if (f.ethnicity && c.ethnicity !== f.ethnicity) return false;
+    if (f.nationality && c.nationality !== f.nationality) return false;
+    if (f.type && c.type !== f.type) return false;
+    if (f.location && c.location !== f.location) return false;
+    if (f.build && c.build !== f.build) return false;
+    if (f.body_hair && c.body_hair !== f.body_hair) return false;
+    if (f.tattoos && c.tattoos !== f.tattoos) return false;
+    if (f.age_bucket && c._age_bucket !== f.age_bucket) return false;
+    if (f.height_bucket && c._height_bucket !== f.height_bucket) return false;
+    if (f.foot_bucket && c._foot_bucket !== f.foot_bucket) return false;
     if (f.purpose.length > 0 && !f.purpose.some(p => c.purpose.includes(p))) return false;
     if (f.kinks.length > 0 && !f.kinks.some(k => c.kinks.includes(k))) return false;
     return true;
@@ -1034,7 +976,7 @@ function renderResults(results) {
       <div class="card-body">
         <div class="card-name">${c.name}</div>
         <div class="card-meta">
-          ${[c.ethnicity, c.nationality, c.age_range, c.build, c.height].filter(Boolean).join(' · ')}<br>
+          ${[c.ethnicity, c.nationality, c._age_bucket, c.build, c._height_display].filter(Boolean).join(' · ')}<br>
           ${[c.foot_size ? 'Size ' + c.foot_size : '', c.body_hair, c.tattoos ? c.tattoos + ' ink' : ''].filter(Boolean).join(' · ')}
         </div>
         <div class="card-tags">
@@ -1059,8 +1001,6 @@ function openModal(index) {
     .map(([k, v]) => `<a class="modal-social-link" href="${v}" target="_blank" rel="noopener">${k}</a>`)
     .join('');
 
-  const locationLine = [c.location, c.nationality].filter(Boolean).join(', ');
-
   body.innerHTML = `
     <div class="modal-hero">
       ${c.photo ? `<img src="${c.photo}" alt="${c.name}" />` : `<span class="modal-hero-placeholder">${c.name.charAt(0)}</span>`}
@@ -1076,12 +1016,13 @@ function openModal(index) {
 
       <div class="modal-section-label">// Details</div>
       <div class="modal-stats">
+        ${c.orientation && c.orientation !== 'Unknown' ? `<span class="modal-stat-label">Orientation</span><span class="modal-stat-value">${c.orientation}</span>` : ''}
         ${c.ethnicity ? `<span class="modal-stat-label">Ethnicity</span><span class="modal-stat-value">${c.ethnicity}</span>` : ''}
         ${c.nationality ? `<span class="modal-stat-label">Nationality</span><span class="modal-stat-value">${c.nationality}</span>` : ''}
         ${c.location ? `<span class="modal-stat-label">Based in</span><span class="modal-stat-value">${c.location}</span>` : ''}
-        ${c.age_range ? `<span class="modal-stat-label">Age</span><span class="modal-stat-value">${c.age_range}</span>` : ''}
+        ${c.age ? `<span class="modal-stat-label">Age</span><span class="modal-stat-value">${c.age}</span>` : ''}
         ${c.build ? `<span class="modal-stat-label">Build</span><span class="modal-stat-value">${c.build}</span>` : ''}
-        ${c.height ? `<span class="modal-stat-label">Height</span><span class="modal-stat-value">${c.height}</span>` : ''}
+        ${c._height_display ? `<span class="modal-stat-label">Height</span><span class="modal-stat-value">${c._height_display}</span>` : ''}
         ${c.foot_size ? `<span class="modal-stat-label">Foot Size</span><span class="modal-stat-value">US ${c.foot_size}</span>` : ''}
         ${c.body_hair ? `<span class="modal-stat-label">Body Hair</span><span class="modal-stat-value">${c.body_hair}</span>` : ''}
         ${c.tattoos ? `<span class="modal-stat-label">Tattoos</span><span class="modal-stat-value">${c.tattoos}</span>` : ''}
@@ -1121,8 +1062,10 @@ function closeModal(event) {
 
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-// Show all on load
-doSearch();
+// ============================================================
+// INIT — load data from Airtable via Netlify function
+// ============================================================
+loadCreators();
 </script>
 </body>
 </html>
